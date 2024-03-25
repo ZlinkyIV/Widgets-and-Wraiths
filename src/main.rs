@@ -1,5 +1,11 @@
-use robots_and_skeletons::world;
+use {robots_and_skeletons::{entity_lib::cannon::Cannon, world::*}, std::rc::Rc};
 
 fn main() {
-    println!("Hello, world!");
+    let mut world = World::new();
+
+    let cannon = Cannon::new();
+    
+    world.add_entity(Rc::new(cannon));
+
+    let ctx = world.get_context();
 }
