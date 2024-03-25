@@ -8,4 +8,6 @@ fn main() {
     world.add_entity(Rc::new(cannon));
 
     let ctx = world.get_context();
+
+    world.step();
 }

@@ -46,7 +46,7 @@ impl EntityCollectionFilter for Inside<Circle> {
 
 pub struct EnemiesOf<'a>(pub &'a Alignment);
 
-impl<'a> EntityCollectionFilter for EnemiesOf<'a> {
+impl EntityCollectionFilter for EnemiesOf<'_> {
     fn apply(self, collection: &EntityCollection) -> EntityCollection {
         let qualifiers = collection.entities().into_iter()
             .filter(|entity| {

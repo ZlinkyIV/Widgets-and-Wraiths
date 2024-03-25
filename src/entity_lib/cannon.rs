@@ -24,6 +24,11 @@ impl Entity for Cannon {
             .filter(EnemiesOf(&self.alignment))
             .closest_to(&self.position);
 
+        let _ = std::mem::replace(self, Self {
+            position: Position::Intangible,
+            alignment: self.alignment,
+        });
+
         match closest_enemy_in_sight {
             None => Action::DoNothing(Cooldown::Finite(12)),
             Some(enemy) => Action::FireAt {
