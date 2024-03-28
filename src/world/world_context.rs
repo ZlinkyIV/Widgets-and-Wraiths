@@ -1,11 +1,12 @@
 use super::entity_collection::EntityCollection;
 
-pub struct WorldContext {
-    pub entities: EntityCollection,
+#[derive(Clone)]
+pub struct WorldContext<'a> {
+    pub entities: EntityCollection<'a>,
 }
 
-impl WorldContext {
-    pub fn entities(&self) -> EntityCollection {
+impl<'a> WorldContext<'a> {
+    pub fn entities(&self) -> EntityCollection<'a> {
         self.entities.clone()
     }
 }

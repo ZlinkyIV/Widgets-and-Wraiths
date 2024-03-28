@@ -14,5 +14,5 @@ pub fn are_allies(a: &Alignment, b: &Alignment) -> bool {
 }
 
 pub fn are_enemies(a: &Alignment, b: &Alignment) -> bool {
-    false
+    true
 }

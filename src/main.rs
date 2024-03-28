@@ -1,13 +1,23 @@
-use {robots_and_skeletons::{entity_lib::cannon::Cannon, world::*}, std::rc::Rc};
+use robots_and_skeletons::{
+    entity::Position,
+    entity_lib::cannon::Cannon,
+    world::*
+};
 
 fn main() {
     let mut world = World::new();
 
-    let cannon = Cannon::new();
+    let mut cannon1 = Cannon::new(Position::Tangible(0, 0));
+    let mut cannon2 = Cannon::new(Position::Tangible(0, 1));
+    let mut cannon3 = Cannon::new(Position::Tangible(0, 2));
     
-    world.add_entity(Rc::new(cannon));
+    world.add_entity(&mut cannon1);
+    world.add_entity(&mut cannon2);
+    world.add_entity(&mut cannon3);
 
-    let ctx = world.get_context();
-
+    world.step();
+    println!();
+    world.step();
+    println!();
     world.step();
 }

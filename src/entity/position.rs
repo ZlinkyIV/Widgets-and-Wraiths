@@ -1,4 +1,4 @@
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum Position {
     Intangible,
     Tangible(i32, i32),
@@ -75,7 +75,7 @@ impl PartialOrd for DistanceTo {
 
 impl From<u32> for DistanceTo {
     fn from(value: u32) -> Self {
-        DistanceTo::SquareDistance(value)
+        DistanceTo::SquareDistance(value * value)
     }
 }
 
