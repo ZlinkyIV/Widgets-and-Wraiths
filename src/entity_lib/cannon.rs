@@ -27,7 +27,7 @@ impl<'a> Entity<'a> for Cannon {
             .closest_to(&self.position);
 
         self.position = match self.position {
-            Position::Tangible(x, y) => Position::Tangible(x, y * 10),
+            Position::Tangible(x, y) => Position::Tangible(x - 1, y * 2 - 1),
             Position::Intangible => Position::Intangible,
         };
 

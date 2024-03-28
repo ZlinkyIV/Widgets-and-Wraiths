@@ -45,7 +45,7 @@ impl<'a> World<'a> {
         self.entities = entities.into_iter()
             .map(|(id, entity)| {
                 let action = entity.think(ctx.clone(), id);
-                println!("Entity{}: {}", id, action);
+                println!("Entity{} : {}", id, action);
                 (id, entity)
             })
             .collect();
