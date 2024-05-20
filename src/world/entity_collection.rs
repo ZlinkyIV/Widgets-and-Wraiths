@@ -1,29 +1,20 @@
-use {super::entity_id::EntityID, std::{collections::HashMap, rc::Rc}};
+use std::rc::Rc;
 
 use crate::entity::Entity;
 
 #[derive(Clone)]
-pub struct EntityCollection<'a> {
-    entities: HashMap<EntityID, Rc<dyn Entity<'a> + 'a>>,
+pub struct EntityCollection {
+    entities: Vec<Rc<Entity>>,
 }
 
-impl<'a> EntityCollection<'a> {
-    pub fn new(entities: HashMap<EntityID, Rc<dyn Entity<'a> + 'a>>) -> Self {
-        // let entities = entities
-        //     .iter()
-        //     .map(|(id, entity)| (*id, (*entity).into()))
-        //     .collect();
-        
+impl EntityCollection {
+    pub fn new(entities: Vec<Rc<Entity>>) -> Self {
         Self {
             entities: entities,
         }
     }
 
-    // pub fn entities(&self) -> impl Iterator<Item = Rc<dyn Entity>> + '_ {
-    //     self.entities.iter().map(|entity| Rc::clone(entity))
-    // }
-
-    pub fn entities(&self) -> HashMap<EntityID, Rc<dyn Entity<'a> + 'a>> {
-        self.entities.clone()
+    pub fn entities(&self) -> impl Iterator {
+        self.entities.iter()
     }
 }

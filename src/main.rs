@@ -1,7 +1,7 @@
 use robots_and_skeletons::{
     entity::Position,
     entity_lib::cannon::Cannon,
-    world::*
+    world::*,
 };
 
 fn main() {

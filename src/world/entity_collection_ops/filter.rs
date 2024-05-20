@@ -1,30 +1,32 @@
+use std::rc::Rc;
+
 use crate::{
     entity::{
-        alignment::{self, Alignment}, EntityID, Position
+        alignment::{Alignment, are_enemies}, Entity, Position
     },
     world::entity_collection::EntityCollection
 };
 
-pub trait EntityCollectionFilter<'a> {
-    fn apply(self, collection: EntityCollection<'a>) -> EntityCollection<'a>;
+pub trait EntityCollectionFilter {
+    fn apply(self, collection: EntityCollection) -> EntityCollection;
 }
 
-impl<'a> EntityCollection<'a> {
+impl EntityCollection {
     pub fn filter<F>(self, filter: F) -> Self
-        where F: EntityCollectionFilter<'a>
+        where F: EntityCollectionFilter
     {
         filter.apply(self)
     }
 }
 
 
-pub struct Not(pub EntityID);
-impl<'a> EntityCollectionFilter<'a> for Not {
-    fn apply(self, collection: EntityCollection<'a>) -> EntityCollection<'a> {
+pub struct Not(pub Rc<Entity>);
+impl EntityCollectionFilter for Not {
+    fn apply(self, collection: EntityCollection) -> EntityCollection {
         let qualifiers = collection.entities()
             .into_iter()
-            .filter(|(id, _)| {
-                !(*id == self.0)
+            .filter(|entity| {
+                !(std::ptr::eq(&self.0, entity))
             })
             .collect();
 
@@ -43,11 +45,11 @@ pub struct Circle {
 }
 impl Shape for Circle { }
 
-impl<'a> EntityCollectionFilter<'a> for Inside<Circle> {
-    fn apply(self, collection: EntityCollection<'a>) -> EntityCollection<'a> {
+impl EntityCollectionFilter for Inside<Circle> {
+    fn apply(self, collection: EntityCollection) -> EntityCollection {
         let qualifiers = collection.entities()
             .into_iter()
-            .filter(|(_, entity)| {
+            .filter(|entity| {
                 self.0.center.distance_to(&entity.position()) <= self.0.radius.into()
             })
             .collect();
@@ -57,14 +59,14 @@ impl<'a> EntityCollectionFilter<'a> for Inside<Circle> {
 }
 
 
-pub struct EnemiesOf<'a>(pub &'a Alignment);
+pub struct EnemiesOf(pub Alignment);
 
-impl<'a> EntityCollectionFilter<'a> for EnemiesOf<'_> {
-    fn apply(self, collection: EntityCollection<'a>) -> EntityCollection<'a> {
+impl EntityCollectionFilter for EnemiesOf {
+    fn apply(self, collection: EntityCollection) -> EntityCollection {
         let qualifiers = collection.entities()
             .into_iter()
-            .filter(|(_, entity)| {
-                alignment::are_enemies(&entity.alignment(), &self.0)
+            .filter(|entity| {
+                are_enemies(&entity.alignment(), &self.0)
             })
             .collect();
 

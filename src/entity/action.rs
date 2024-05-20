@@ -4,19 +4,16 @@ use std::{fmt::Debug, rc::Rc};
 use crate::entity::*;
 
 // #[derive(Clone, Copy)]
-pub enum Action<'a> {
-    DoNothing(Cooldown),
-    FireAtEntity {
-        target: Rc<dyn Entity<'a> + 'a>,
-        // with: Projectile,
-    }
+pub enum Action {
+    DoNothing,
+    FireAtEntity(Rc<Entity>)
 }
 
-impl Display for Action<'_> {
+impl Display for Action {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::DoNothing(cooldown) => write!(f, "Do Nothing for {:?}", cooldown),
-            Self::FireAtEntity { target } => write!(f, "Fire At Entity at {:?}", target.position()),
+            Self::DoNothing => write!(f, "Do Nothing for"),
+            Self::FireAtEntity(target) => write!(f, "Fire At Entity at {:?}", target.position()),
         }
     }
 }

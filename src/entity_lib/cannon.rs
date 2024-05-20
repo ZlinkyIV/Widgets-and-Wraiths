@@ -1,5 +1,8 @@
+use std::rc::Rc;
+
 use crate::entity::*;
 use crate::world::entity_collection_ops::filter::*;
+use crate::world::world_context::WorldContext;
 
 use self::alignment::Alignment;
 
@@ -18,12 +21,12 @@ impl Cannon {
     }
 }
 
-impl<'a> Entity<'a> for Cannon {
-    fn think(&mut self, ctx: WorldContext<'a>, my_id: EntityID) -> Action<'a> {
-        let closest_enemy_in_sight = ctx.entities()
+impl Cannon {
+    pub fn think(&mut self, entity: &Rc<Entity>, context: &WorldContext) -> (Action, Delay, Cooldown) {
+        let closest_enemy_in_sight = context.entities()
             .filter(Inside(Circle { center: self.position, radius: 5 }))
-            .filter(EnemiesOf(&self.alignment))
-            .filter(Not(my_id))
+            .filter(EnemiesOf(self.alignment))
+            .filter(Not(entity.clone()))
             .closest_to(&self.position);
 
         self.position = match self.position {
@@ -37,15 +40,16 @@ impl<'a> Entity<'a> for Cannon {
         // });
 
         match closest_enemy_in_sight {
-            None => Action::DoNothing(Cooldown::Finite(12)),
-            Some(enemy) => Action::FireAtEntity {
-                target: enemy,
-                // with: Projectile::new(),
-            }
+            None => (Action::DoNothing, Delay::None, Cooldown::Finite(12)),
+            Some(enemy) => (Action::FireAtEntity(enemy), Delay::None, Cooldown::Finite(12)),
         }
     }
 
-    fn position(&self) -> Position {
+    pub fn position(&self) -> Position {
         self.position
+    }
+
+    pub fn alignment(&self) -> Alignment {
+        self.alignment
     }
 }

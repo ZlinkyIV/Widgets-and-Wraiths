@@ -1,12 +1,14 @@
+use std::rc::Rc;
+
 use super::entity_collection::EntityCollection;
 
 #[derive(Clone)]
-pub struct WorldContext<'a> {
-    pub entities: EntityCollection<'a>,
+pub struct WorldContext {
+    pub entities: Rc<EntityCollection>,
 }
 
-impl<'a> WorldContext<'a> {
-    pub fn entities(&self) -> EntityCollection<'a> {
+impl WorldContext {
+    pub fn entities(&self) -> Rc<EntityCollection> {
         self.entities.clone()
     }
 }

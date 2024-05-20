@@ -5,12 +5,12 @@ use crate::{
     world::entity_collection::EntityCollection
 };
 
-impl<'a> EntityCollection<'a> {
-    pub fn closest_to(&self, position: &Position) -> Option<Rc<dyn Entity<'a> + 'a>> {
+impl<'a> EntityCollection {
+    pub fn closest_to(&self, position: &Position) -> Option<Rc<Entity>> {
         self
             .entities()
             .into_iter()
-            .map(|(_, entity)| entity)
+            .map(|entity| entity)
             .min_by_key(|entity| {
                 entity.position().distance_to(position).square_dist()
             })
