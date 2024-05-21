@@ -4,7 +4,6 @@ pub mod cooldown;
 pub mod delay;
 pub mod position;
 
-use std::cell::BorrowMutError;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -23,24 +22,15 @@ pub struct Entity {
 }
 
 impl Entity {
-    pub fn think(self: &Rc<Entity>, context: &WorldContext) -> Result<(Action, Delay, Cooldown), BorrowMutError> {
-        match self.e_type.try_borrow_mut() {
-            Result::Ok(mut e_type) => Ok(e_type.think(self, context)),
-            Result::Err(e) => Err(e),
-        }
+    pub fn think(self: &mut Rc<Entity>, context: &WorldContext) -> (Action, Delay, Cooldown) {
+        self.e_type.borrow_mut().think(self, context)
     }
 
     pub fn position(self: &Rc<Entity>) -> Position {
-        match self.e_type.try_borrow() {
-            Result::Ok(mut e_type) => Ok(e_type.position(self)),
-            Result::Err(e) => Err(e),
-        }.expect("Entity already borrowed when getting position!")
+        self.e_type.borrow().position()
     }
 
     pub fn alignment(self: &Rc<Entity>) -> Alignment {
-        match self.e_type.try_borrow() {
-            Result::Ok(mut e_type) => Ok(e_type.alignment(self)),
-            Result::Err(e) => Err(e),
-        }.expect("Entity already borrowed when getting alignment!")
+        self.e_type.borrow().alignment()
     }
 }

@@ -1,16 +1,12 @@
 use std::rc::Rc;
 
-use crate::{
-    entity::*, 
-    world::entity_collection::EntityCollection
-};
+use crate::entity::*;
+use crate::world::world_context::WorldContext;
 
-impl<'a> EntityCollection {
+impl<'a> WorldContext {
     pub fn closest_to(&self, position: &Position) -> Option<Rc<Entity>> {
         self
             .entities()
-            .into_iter()
-            .map(|entity| entity)
             .min_by_key(|entity| {
                 entity.position().distance_to(position).square_dist()
             })

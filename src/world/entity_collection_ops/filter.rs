@@ -1,36 +1,50 @@
 use std::rc::Rc;
 
-use crate::{
-    entity::{
-        alignment::{Alignment, are_enemies}, Entity, Position
-    },
-    world::entity_collection::EntityCollection
+use crate::entity::{
+    alignment::{are_enemies, Alignment},
+    Entity,
+    Position,
 };
+use crate::world::world_context::WorldContext;
 
-pub trait EntityCollectionFilter {
-    fn apply(self, collection: EntityCollection) -> EntityCollection;
+
+pub trait Filter {
+    fn apply(self, context: &WorldContext) -> WorldContext;
 }
 
-impl EntityCollection {
-    pub fn filter<F>(self, filter: F) -> Self
-        where F: EntityCollectionFilter
+impl WorldContext {
+    pub fn filter<F>(&self, filter: F) -> Self
+        where F: Filter
     {
         filter.apply(self)
     }
 }
 
 
-pub struct Not(pub Rc<Entity>);
-impl EntityCollectionFilter for Not {
-    fn apply(self, collection: EntityCollection) -> EntityCollection {
-        let qualifiers = collection.entities()
-            .into_iter()
-            .filter(|entity| {
-                !(std::ptr::eq(&self.0, entity))
-            })
-            .collect();
+// pub struct Is(pub Rc<Entity>);
+// impl Filter for Is {
+//     fn apply(self, context: WorldContext) -> WorldContext {
+//         let entities = context.entities()
+//             .filter(|entity| std::ptr::eq(&self.0, *entity))
+//             .map(|entity| *entity)
+//             .collect();
+        
+//         WorldContext {
+//             entities: Rc::new(entities),
+//         }
+//     }
+// }
 
-        EntityCollection::new(qualifiers)
+pub struct Not(pub Rc<Entity>);
+impl Filter for Not {
+    fn apply(self, context: &WorldContext) -> WorldContext {
+        let entities = context.entities()
+            .filter(|entity| !std::ptr::eq(&self.0, entity))
+            .collect();
+        
+        WorldContext {
+            entities: Rc::new(entities),
+        }
     }
 }
 
@@ -45,31 +59,32 @@ pub struct Circle {
 }
 impl Shape for Circle { }
 
-impl EntityCollectionFilter for Inside<Circle> {
-    fn apply(self, collection: EntityCollection) -> EntityCollection {
-        let qualifiers = collection.entities()
-            .into_iter()
+impl Filter for Inside<Circle> {
+    fn apply(self, collection: &WorldContext) -> WorldContext {
+        let entities = collection.entities()
             .filter(|entity| {
                 self.0.center.distance_to(&entity.position()) <= self.0.radius.into()
             })
             .collect();
         
-        EntityCollection::new(qualifiers)
+        WorldContext {
+            entities: Rc::new(entities),
+        }
     }
 }
 
 
 pub struct EnemiesOf(pub Alignment);
-
-impl EntityCollectionFilter for EnemiesOf {
-    fn apply(self, collection: EntityCollection) -> EntityCollection {
-        let qualifiers = collection.entities()
-            .into_iter()
+impl Filter for EnemiesOf {
+    fn apply(self, collection: &WorldContext) -> WorldContext {
+        let entities = collection.entities()
             .filter(|entity| {
                 are_enemies(&entity.alignment(), &self.0)
             })
             .collect();
 
-        EntityCollection::new(qualifiers)
+        WorldContext {
+            entities: Rc::new(entities),
+        }
     }
 }

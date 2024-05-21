@@ -17,19 +17,19 @@ pub enum EntityType {
 }
 
 impl EntityType {
-    pub fn think(&mut self, entity: &Rc<Entity>, context: &WorldContext) -> (Action, Delay, Cooldown) {
+    pub fn think(&mut self, this: &Rc<Entity>, context: &WorldContext) -> (Action, Delay, Cooldown) {
         match self {
-            EntityType::Cannon(cannon) => Cannon::think(cannon, entity, context),
+            EntityType::Cannon(cannon) => Cannon::think(cannon, this, context),
         }
     }
 
-    pub fn position(&self, entity: &Rc<Entity>) -> Position {
+    pub fn position(&self) -> Position {
         match self {
             EntityType::Cannon(cannon) => Cannon::position(cannon),
         }
     }
 
-    pub fn alignment(&self, entity: &Rc<Entity>) -> Alignment {
+    pub fn alignment(&self) -> Alignment {
         match self {
             EntityType::Cannon(cannon) => Cannon::alignment(cannon),
         }

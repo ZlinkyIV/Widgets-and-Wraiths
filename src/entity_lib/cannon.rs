@@ -22,26 +22,21 @@ impl Cannon {
 }
 
 impl Cannon {
-    pub fn think(&mut self, entity: &Rc<Entity>, context: &WorldContext) -> (Action, Delay, Cooldown) {
-        let closest_enemy_in_sight = context.entities()
+    pub fn think(&mut self, this: &Rc<Entity>, context: &WorldContext) -> (Action, Delay, Cooldown) {
+        let closest_enemy_in_sight = context
             .filter(Inside(Circle { center: self.position, radius: 5 }))
             .filter(EnemiesOf(self.alignment))
-            .filter(Not(entity.clone()))
+            .filter(Not(this.clone()))
             .closest_to(&self.position);
 
-        self.position = match self.position {
-            Position::Tangible(x, y) => Position::Tangible(x - 1, y * 2 - 1),
-            Position::Intangible => Position::Intangible,
-        };
-
-        // let _ = std::mem::replace(self, Self {
-        //     position: Position::Intangible,
-        //     alignment: self.alignment,
-        // });
+        // self.position = match self.position {
+        //     Position::Tangible(x, y) => Position::Tangible(x - 1, y * 2 - 1),
+        //     Position::Intangible => Position::Intangible,
+        // };
 
         match closest_enemy_in_sight {
-            None => (Action::DoNothing, Delay::None, Cooldown::Finite(12)),
-            Some(enemy) => (Action::FireAtEntity(enemy), Delay::None, Cooldown::Finite(12)),
+            None => (Action::DoNothing, Delay::Time(0), Cooldown::Finite(12)),
+            Some(enemy) => (Action::FireAtEntity(enemy), Delay::Time(0), Cooldown::Finite(12)),
         }
     }
 

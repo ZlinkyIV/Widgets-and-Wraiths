@@ -1,22 +1,20 @@
 use std::rc::Rc;
 
-use super::entity_collection::EntityCollection;
+use crate::entity::Entity;
+
+// use super::entity_collection_ops::filter::Filter;
 
 #[derive(Clone)]
 pub struct WorldContext {
-    pub entities: Rc<EntityCollection>,
+    pub entities: Rc<Vec<Rc<Entity>>>,
 }
 
 impl WorldContext {
-    pub fn entities(&self) -> Rc<EntityCollection> {
-        self.entities.clone()
+    pub fn entities(&self) -> impl Iterator<Item = Rc<Entity>> + '_ {
+        self.entities.iter().map(|entity| entity.clone())
     }
-}
 
-// impl From<World> for WorldContext {
-//     fn from(value: World) -> Self {
-//         Self {
-//             entities: value.entities
-//         }
-//     }
-// }
+    // pub fn apply_filters(self, filters: &[&dyn Filter]) -> WorldContext {
+
+    // }
+}

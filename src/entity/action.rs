@@ -3,7 +3,7 @@ use std::{fmt::Debug, rc::Rc};
 
 use crate::entity::*;
 
-// #[derive(Clone, Copy)]
+#[derive(Clone)]
 pub enum Action {
     DoNothing,
     FireAtEntity(Rc<Entity>)

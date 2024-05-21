@@ -1,4 +1,4 @@
+#[derive(Clone, Copy)]
 pub enum Delay {
-    None,
     Time(u16),
 }
