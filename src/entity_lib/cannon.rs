@@ -35,8 +35,8 @@ impl Cannon {
         // };
 
         match closest_enemy_in_sight {
-            None => (Action::DoNothing, Delay::Time(0), Cooldown::Finite(12)),
-            Some(enemy) => (Action::FireAtEntity(enemy), Delay::Time(0), Cooldown::Finite(12)),
+            None => (Action::DoNothing, Delay::Time(0), Cooldown::Time(12)),
+            Some(enemy) => (Action::FireAtEntity(enemy), Delay::Time(0), Cooldown::Time(12)),
         }
     }
 

@@ -6,7 +6,7 @@ mod command;
 mod command_list;
 
 use world_context::WorldContext;
-use crate::entity::{Action, Cooldown, Delay, Entity};
+use crate::entity::{cooldown, Action, Cooldown, Delay, Entity};
 
 use std::{iter, mem};
 use std::rc::Rc;
@@ -45,9 +45,18 @@ impl World {
         let context = self.get_context();
 
         let new_actions = self.entities.iter_mut()
-            .filter_map(|(cooldown, entity)| {
+            .map(|(cooldown, entity)|
                 match cooldown {
-                    Cooldown::Finite(0) => {
+                    Cooldown::Time(0) | Cooldown::Forever => (cooldown, entity),
+                    Cooldown::Time(t) => {
+                        *cooldown = Cooldown::Time(*t - 1);
+                        (cooldown, entity)
+                    }
+                }
+            )
+            .filter_map(|(cooldown, entity)|
+                match cooldown {
+                    Cooldown::Time(0) => {
                         let (action, delay, new_cooldown) = entity.think(&context);
                         *cooldown = new_cooldown;
 
@@ -55,10 +64,34 @@ impl World {
                     },
                     _ => None,
                 }
-            });
+            );
 
         let delayed_actions = mem::take(&mut self.delayed_actions);
-        self.delayed_actions = delayed_actions.into_iter().chain(new_actions).collect();
+        let all_actions: Vec<_> = delayed_actions.into_iter().chain(new_actions).collect();
+
+        // let impacts = self.delayed_actions.iter()
+        //     .filter_map(|(delay, action)|
+        //         match delay {
+        //             Delay::Time(0) => ...,
+        //             _ => None,
+        //         }
+        //     )
+
+        let mut all_actions = all_actions;
+        self.delayed_actions = all_actions.iter_mut()
+            .filter_map(|(delay, action)| 
+                match delay {
+                    Delay::Time(0) => None,
+                    Delay::Time(t) => {
+                        *delay = Delay::Time(*t - 1);
+                        Some((delay, action))
+                    }
+                }
+            )
+            .map(|(delay, action)|
+                (*delay, action.clone())
+            )
+            .collect();
     }
 
     pub fn get_context(&self) -> WorldContext {

@@ -1,5 +1,5 @@
 #[derive(Clone, Copy, Debug)]
 pub enum Cooldown {
-    Finite(u16),
+    Time(u16),
     Forever,
 }
