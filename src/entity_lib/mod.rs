@@ -16,6 +16,12 @@ pub enum EntityType {
     Cannon(Cannon),
 }
 
+impl From<Cannon> for EntityType {
+    fn from(value: Cannon) -> Self {
+        Self::Cannon(value)
+    }
+}
+
 impl EntityType {
     pub fn think(&mut self, this: &Rc<Entity>, context: &WorldContext) -> (Action, Delay, Cooldown) {
         match self {

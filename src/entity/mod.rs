@@ -22,6 +22,12 @@ pub struct Entity {
 }
 
 impl Entity {
+    pub fn new(e_type: EntityType) -> Entity {
+        Entity {
+            e_type: RefCell::new(e_type),
+        }
+    }
+
     pub fn think(self: &mut Rc<Entity>, context: &WorldContext) -> (Action, Delay, Cooldown) {
         self.e_type.borrow_mut().think(self, context)
     }
