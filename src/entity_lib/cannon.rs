@@ -40,10 +40,12 @@ impl Cannon {
         }
     }
 
+    #[inline(always)]
     pub fn position(&self) -> Position {
         self.position
     }
 
+    #[inline(always)]
     pub fn alignment(&self) -> Alignment {
         self.alignment
     }

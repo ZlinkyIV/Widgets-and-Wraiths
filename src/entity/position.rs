@@ -96,3 +96,13 @@ impl From<u32> for DistanceTo {
 //         (self.square_distance as f64).sqrt()
 //     }
 // }
+
+
+pub fn normalize((x, y): (i32, i32)) -> (f32, f32) {
+    let len = ((x*x + y*y) as f32).sqrt();
+    
+    (
+        x as f32 / len,
+        y as f32 / len,
+    )
+}

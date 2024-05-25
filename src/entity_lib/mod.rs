@@ -1,5 +1,7 @@
 pub mod cannon;
+pub mod cannon_ball;
 
+use std::fmt::Display;
 use std::rc::Rc;
 
 pub use cannon::Cannon;
@@ -23,21 +25,32 @@ impl From<Cannon> for EntityType {
 }
 
 impl EntityType {
+    #[inline(always)]
     pub fn think(&mut self, this: &Rc<Entity>, context: &WorldContext) -> (Action, Delay, Cooldown) {
         match self {
             EntityType::Cannon(cannon) => Cannon::think(cannon, this, context),
         }
     }
 
+    #[inline(always)]
     pub fn position(&self) -> Position {
         match self {
             EntityType::Cannon(cannon) => Cannon::position(cannon),
         }
     }
 
+    #[inline(always)]
     pub fn alignment(&self) -> Alignment {
         match self {
             EntityType::Cannon(cannon) => Cannon::alignment(cannon),
+        }
+    }
+}
+
+impl Display for EntityType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Cannon(_) => write!(f, "Cannon")
         }
     }
 }

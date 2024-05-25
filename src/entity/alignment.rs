@@ -3,6 +3,10 @@ pub struct Alignment {
     
 }
 
+impl Alignment {
+    pub const NEUTRAL: Alignment = Alignment { };
+}
+
 impl Default for Alignment {
     fn default() -> Self {
         Self {  }
